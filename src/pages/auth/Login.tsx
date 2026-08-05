@@ -2,12 +2,14 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 
 function Login() {
     return (
-        <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="100vh"
-        >
+       <Box
+    sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+    }}
+>
             <Paper
                 elevation={4}
                 sx={{
@@ -15,11 +17,14 @@ function Login() {
                     width: 400,
                 }}
             >
-                <Typography variant="h4" mb={3}>
+                <Typography
+    variant="h4"
+    sx={{ mb: 3 }}
+>
                     SISMEDICO
                 </Typography>
 
-                <Typography mb={3}>
+             <Typography sx={{ mb: 3 }}>
                     Pantalla de inicio de sesión
                 </Typography>
 

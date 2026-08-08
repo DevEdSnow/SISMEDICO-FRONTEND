@@ -1,6 +1,5 @@
 
 import {
-    Box,
     CircularProgress,
     Typography,
 } from "@mui/material";
@@ -17,15 +16,18 @@ function Loader({
     size = 40,
 }: LoaderProps) {
     return (
-        <Box
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            gap={2}
-            sx={{
+        <div
+            style={{
                 width: "100%",
-                minHeight: fullScreen ? "100vh" : 200,
+                minHeight: fullScreen
+                    ? "100vh"
+                    : "200px",
+
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "16px",
             }}
         >
             <CircularProgress size={size} />
@@ -38,7 +40,7 @@ function Loader({
                     {message}
                 </Typography>
             )}
-        </Box>
+        </div>
     );
 }
 

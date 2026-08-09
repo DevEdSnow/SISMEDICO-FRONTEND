@@ -59,7 +59,7 @@ function PacienteForm({
             initialData?.telefonoEmergencia ?? "",
         peso: initialData?.peso ?? 0,
         altura: initialData?.altura ?? 0,
-        activo: initialData?.activo ?? true,
+        
     });
 
     useEffect(() => {
@@ -101,8 +101,7 @@ function PacienteForm({
                 altura:
                     initialData.altura ?? 0,
 
-                activo:
-                    initialData.activo ?? true,
+                
             });
         }
     }, [initialData]);
@@ -391,32 +390,6 @@ function PacienteForm({
 
             {/* Estado */}
 
-            <TextField
-                select
-                label="Estado"
-                value={
-                    form.activo
-                        ? "true"
-                        : "false"
-                }
-                onChange={(event) =>
-                    setForm({
-                        ...form,
-                        activo:
-                            event.target.value ===
-                            "true",
-                    })
-                }
-                fullWidth
-            >
-                <MenuItem value="true">
-                    Activo
-                </MenuItem>
-
-                <MenuItem value="false">
-                    Inactivo
-                </MenuItem>
-            </TextField>
 
             {/* Botones */}
 

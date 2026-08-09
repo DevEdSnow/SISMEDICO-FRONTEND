@@ -198,21 +198,24 @@ function MedicoForm({
                 fullWidth
             />
 
-            <TextField
-                label="Años de experiencia"
-                type="number"
-                value={form.experiencia}
-                onChange={(event) =>
-                    handleChange(
-                        "experiencia",
-                        Number(event.target.value)
-                    )
-                }
-                inputProps={{
-                    min: 0,
-                }}
-                fullWidth
-            />
+           
+<TextField
+    label="Años de experiencia"
+    type="number"
+    value={form.experiencia}
+    onChange={(event) => {
+        const value = Number(event.target.value);
+
+        handleChange(
+            "experiencia",
+            value < 0 ? 0 : value
+        );
+    }}
+    fullWidth
+/>
+
+
+            
 
             <TextField
                 label="Biografía"

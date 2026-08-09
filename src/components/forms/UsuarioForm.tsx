@@ -54,8 +54,7 @@ function UsuarioForm({
             password:
                 initialData?.password ?? "",
 
-            confirmarPassword:
-                initialData?.confirmarPassword ?? "",
+           
 
             telefono:
                 initialData?.telefono ?? "",
@@ -73,6 +72,8 @@ function UsuarioForm({
                 initialData?.rolId ?? 0,
         });
 
+        const [confirmarPassword, setConfirmarPassword] = useState("");
+
     useEffect(() => {
         if (initialData) {
             setForm({
@@ -88,8 +89,7 @@ function UsuarioForm({
                 password:
                     initialData.password ?? "",
 
-                confirmarPassword:
-                    initialData.confirmarPassword ?? "",
+              
 
                 telefono:
                     initialData.telefono ?? "",
@@ -106,6 +106,8 @@ function UsuarioForm({
                 rolId:
                     initialData.rolId ?? 0,
             });
+
+            setConfirmarPassword("");
         }
     }, [initialData]);
 
@@ -184,22 +186,21 @@ function UsuarioForm({
                 fullWidth
             />
 
-            <TextField
-                label="Confirmar contraseña"
-                type="password"
-                value={
-                    form.confirmarPassword
-                }
-                onChange={(event) =>
-                    setForm({
-                        ...form,
-                        confirmarPassword:
-                            event.target.value,
-                    })
-                }
-                required={!initialData}
-                fullWidth
-            />
+            
+<TextField
+    label="Confirmar contraseña"
+    type="password"
+    value={confirmarPassword}
+    onChange={(event) =>
+        setConfirmarPassword(
+            event.target.value
+        )
+    }
+    required={!initialData}
+    fullWidth
+/>
+
+
 
             <TextField
                 label="Teléfono"

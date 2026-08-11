@@ -108,12 +108,14 @@ function Sidebar({
                     padding: "0 20px",
                 }}
             >
-                <Typography
-                    variant="h6"
-                    fontWeight="bold"
-                >
-                    SISMEDICO
-                </Typography>
+                <span
+    style={{
+        fontSize: "20px",
+        fontWeight: "bold",
+    }}
+>
+    SISMEDICO
+</span>
             </div>
 
             <Divider />

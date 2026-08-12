@@ -9,7 +9,7 @@ import type {
 } from "@reduxjs/toolkit";
 
 import {
-    iniciarSesion,
+    login as iniciarSesion,
 } from "../../api/auth";
 
 import type {

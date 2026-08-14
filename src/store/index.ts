@@ -4,23 +4,20 @@ import authReducer from "./auth/authSlice";
 import usuarioReducer from "./usuario/usuarioSlice";
 import pacienteReducer from "./paciente/pacienteSlice";
 import medicoReducer from "./medico/medicoSlice";
+import citaReducer from "./cita/citaSlice";
 
 export const store = configureStore({
-
     reducer: {
-
         auth: authReducer,
-
         usuario: usuarioReducer,
-
         paciente: pacienteReducer,
-
-        medico: medicoReducer
-
-    }
-
+        medico: medicoReducer,
+        cita: citaReducer,
+    },
 });
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState =
+    ReturnType<typeof store.getState>;
 
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch =
+    typeof store.dispatch;

@@ -197,11 +197,7 @@ function EspecialidadTable({
                                     }
                                 </TableCell>
 
-                                <TableCell>
-                                    {especialidad.activo
-                                        ? "Activa"
-                                        : "Inactiva"}
-                                </TableCell>
+                              
 
                                 <TableCell align="center">
                                     <div

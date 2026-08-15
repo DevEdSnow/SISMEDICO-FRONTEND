@@ -7,6 +7,7 @@ import medicoReducer from "./medico/medicoSlice";
 import citaReducer from "./cita/citaSlice";
 import diagnosticoReducer from "./diagnostico/diagnosticoSlice";
 import especialidadReducer from "./especialidad/especialidadSlice";
+import horarioReducer from "./horario/horarioSlice";
 
 export const store = configureStore({
     reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
         cita: citaReducer,
         diagnostico: diagnosticoReducer,
         especialidad: especialidadReducer,
+        horario: horarioReducer,
     },
 });
 

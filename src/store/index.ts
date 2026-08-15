@@ -6,6 +6,7 @@ import pacienteReducer from "./paciente/pacienteSlice";
 import medicoReducer from "./medico/medicoSlice";
 import citaReducer from "./cita/citaSlice";
 import diagnosticoReducer from "./diagnostico/diagnosticoSlice";
+import especialidadReducer from "./especialidad/especialidadSlice";
 
 export const store = configureStore({
     reducer: {
@@ -15,8 +16,12 @@ export const store = configureStore({
         medico: medicoReducer,
         cita: citaReducer,
         diagnostico: diagnosticoReducer,
+        especialidad: especialidadReducer,
     },
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState =
+    ReturnType<typeof store.getState>;
+
+export type AppDispatch =
+    typeof store.dispatch;

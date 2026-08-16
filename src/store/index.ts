@@ -8,6 +8,7 @@ import citaReducer from "./cita/citaSlice";
 import diagnosticoReducer from "./diagnostico/diagnosticoSlice";
 import especialidadReducer from "./especialidad/especialidadSlice";
 import horarioReducer from "./horario/horarioSlice";
+import notificacionReducer from "./notificacion/notificacionSlice";
 
 export const store = configureStore({
     reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
         diagnostico: diagnosticoReducer,
         especialidad: especialidadReducer,
         horario: horarioReducer,
+        notificacion: notificacionReducer,
     },
 });
 

@@ -172,13 +172,7 @@ function NotificacionTable({
                                 </TableCell>
 
                                 <TableCell>
-                                    {notificacion.fechaCreacion
-                                        ? new Date(
-                                              notificacion.fechaCreacion
-                                          ).toLocaleString(
-                                              "es-MX"
-                                          )
-                                        : "-"}
+                                    
                                 </TableCell>
 
                                 <TableCell align="center">

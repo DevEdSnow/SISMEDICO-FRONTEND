@@ -1,216 +1,458 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import {
+    createAsyncThunk,
+    createSlice,
+} from "@reduxjs/toolkit";
 
-export interface Paciente {
+import type {
+    PayloadAction,
+} from "@reduxjs/toolkit";
 
-    id: number;
+import {
+    listarPacientes,
+    obtenerPaciente,
+    crearPaciente,
+    actualizarPaciente,
+    eliminarPaciente,
+} from "../../api/paciente";
 
-    usuarioId: number;
-
-    nombre: string;
-
-    apellido: string;
-
-    correo: string;
-
-    telefono: string;
-
-    curp: string;
-
-    numeroSeguroSocial: string;
-
-    fechaNacimiento: string;
-
-    tipoSangre: string;
-
-    alergias: string;
-
-    enfermedadesCronicas: string;
-
-    medicamentosActuales: string;
-
-    contactoEmergencia: string;
-
-    telefonoEmergencia: string;
-
-    peso: number;
-
-    altura: number;
-
-    activo: boolean;
-
-}
+import type {
+    PacienteRequest,
+    PacienteResponse,
+} from "../../api/paciente";
 
 interface PacienteState {
+    pacientes: PacienteResponse[];
 
-    pacientes: Paciente[];
-
-    paciente: Paciente | null;
+    pacienteSeleccionado:
+        | PacienteResponse
+        | null;
 
     loading: boolean;
 
     error: string | null;
-
 }
 
 const initialState: PacienteState = {
-
     pacientes: [],
 
-    paciente: null,
+    pacienteSeleccionado: null,
 
     loading: false,
 
-    error: null
-
+    error: null,
 };
 
-const pacienteSlice = createSlice({
+/**
+ * Obtener todos los pacientes
+ */
+export const fetchPacientes =
+    createAsyncThunk<
+        PacienteResponse[],
+        void,
+        {
+            rejectValue: string;
+        }
+    >(
+        "paciente/fetchPacientes",
+        async (
+            _,
+            { rejectWithValue }
+        ) => {
+            try {
+                return await listarPacientes();
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudieron obtener los pacientes."
+                );
+            }
+        }
+    );
 
+/**
+ * Obtener paciente por ID
+ */
+export const fetchPaciente =
+    createAsyncThunk<
+        PacienteResponse,
+        number,
+        {
+            rejectValue: string;
+        }
+    >(
+        "paciente/fetchPaciente",
+        async (
+            id,
+            { rejectWithValue }
+        ) => {
+            try {
+                return await obtenerPaciente(
+                    id
+                );
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo obtener el paciente."
+                );
+            }
+        }
+    );
+
+/**
+ * Crear paciente
+ */
+export const addPaciente =
+    createAsyncThunk<
+        PacienteResponse,
+        PacienteRequest,
+        {
+            rejectValue: string;
+        }
+    >(
+        "paciente/addPaciente",
+        async (
+            request,
+            { rejectWithValue }
+        ) => {
+            try {
+                return await crearPaciente(
+                    request
+                );
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo crear el paciente."
+                );
+            }
+        }
+    );
+
+/**
+ * Actualizar paciente
+ */
+export const updatePaciente =
+    createAsyncThunk<
+        PacienteResponse,
+        {
+            id: number;
+            request: PacienteRequest;
+        },
+        {
+            rejectValue: string;
+        }
+    >(
+        "paciente/updatePaciente",
+        async (
+            { id, request },
+            { rejectWithValue }
+        ) => {
+            try {
+                return await actualizarPaciente(
+                    id,
+                    request
+                );
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo actualizar el paciente."
+                );
+            }
+        }
+    );
+
+/**
+ * Eliminar paciente
+ */
+export const removePaciente =
+    createAsyncThunk<
+        number,
+        number,
+        {
+            rejectValue: string;
+        }
+    >(
+        "paciente/removePaciente",
+        async (
+            id,
+            { rejectWithValue }
+        ) => {
+            try {
+                await eliminarPaciente(id);
+
+                return id;
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo eliminar el paciente."
+                );
+            }
+        }
+    );
+
+const pacienteSlice = createSlice({
     name: "paciente",
 
     initialState,
 
     reducers: {
+        setPacienteSeleccionado: (
+            state,
+            action: PayloadAction<
+                PacienteResponse | null
+            >
+        ) => {
+            state.pacienteSeleccionado =
+                action.payload;
+        },
 
-        getPacientesStart(state) {
+        limpiarPacienteSeleccionado: (
+            state
+        ) => {
+            state.pacienteSeleccionado =
+                null;
+        },
 
-            state.loading = true;
+        limpiarError: (
+            state
+        ) => {
             state.error = null;
-
         },
 
-        getPacientesSuccess(
+        limpiarPacientes: (
+            state
+        ) => {
+            state.pacientes = [];
 
-            state,
-            action: PayloadAction<Paciente[]>
-
-        ) {
-
-            state.loading = false;
-            state.pacientes = action.payload;
-
+            state.pacienteSeleccionado =
+                null;
         },
+    },
 
-        getPacientesFailure(
+    extraReducers: (builder) => {
+        builder
 
-            state,
-            action: PayloadAction<string>
+            // LISTAR
+            .addCase(
+                fetchPacientes.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-        ) {
+            .addCase(
+                fetchPacientes.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state.loading = false;
-            state.error = action.payload;
+                    state.pacientes =
+                        action.payload;
+                }
+            )
 
-        },
+            .addCase(
+                fetchPacientes.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-        getPacienteSuccess(
+                    state.error =
+                        action.payload ??
+                        "Error al cargar los pacientes.";
+                }
+            )
 
-            state,
-            action: PayloadAction<Paciente>
+            // OBTENER
+            .addCase(
+                fetchPaciente.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-        ) {
+            .addCase(
+                fetchPaciente.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state.loading = false;
-            state.paciente = action.payload;
+                    state.pacienteSeleccionado =
+                        action.payload;
+                }
+            )
 
-        },
+            .addCase(
+                fetchPaciente.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-        addPaciente(
+                    state.error =
+                        action.payload ??
+                        "Error al obtener el paciente.";
+                }
+            )
 
-            state,
-            action: PayloadAction<Paciente>
+            // CREAR
+            .addCase(
+                addPaciente.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-        ) {
+            .addCase(
+                addPaciente.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state.pacientes.push(action.payload);
+                    state.pacientes.push(
+                        action.payload
+                    );
 
-        },
+                    state.pacienteSeleccionado =
+                        action.payload;
+                }
+            )
 
-        updatePaciente(
+            .addCase(
+                addPaciente.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state,
-            action: PayloadAction<Paciente>
+                    state.error =
+                        action.payload ??
+                        "Error al crear el paciente.";
+                }
+            )
 
-        ) {
+            // ACTUALIZAR
+            .addCase(
+                updatePaciente.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-            const index = state.pacientes.findIndex(
-                paciente => paciente.id === action.payload.id
+            .addCase(
+                updatePaciente.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    const index =
+                        state.pacientes.findIndex(
+                            (paciente) =>
+                                paciente.id ===
+                                action.payload.id
+                        );
+
+                    if (index !== -1) {
+                        state.pacientes[index] =
+                            action.payload;
+                    }
+
+                    state.pacienteSeleccionado =
+                        action.payload;
+                }
+            )
+
+            .addCase(
+                updatePaciente.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    state.error =
+                        action.payload ??
+                        "Error al actualizar el paciente.";
+                }
+            )
+
+            // ELIMINAR
+            .addCase(
+                removePaciente.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
+
+            .addCase(
+                removePaciente.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    state.pacientes =
+                        state.pacientes.filter(
+                            (paciente) =>
+                                paciente.id !==
+                                action.payload
+                        );
+
+                    if (
+                        state
+                            .pacienteSeleccionado
+                            ?.id ===
+                        action.payload
+                    ) {
+                        state.pacienteSeleccionado =
+                            null;
+                    }
+                }
+            )
+
+            .addCase(
+                removePaciente.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    state.error =
+                        action.payload ??
+                        "Error al eliminar el paciente.";
+                }
             );
-
-            if (index !== -1) {
-
-                state.pacientes[index] = action.payload;
-
-            }
-
-            if (
-
-                state.paciente &&
-                state.paciente.id === action.payload.id
-
-            ) {
-
-                state.paciente = action.payload;
-
-            }
-
-        },
-
-        deletePaciente(
-
-            state,
-            action: PayloadAction<number>
-
-        ) {
-
-            state.pacientes = state.pacientes.filter(
-
-                paciente => paciente.id !== action.payload
-
-            );
-
-            if (
-
-                state.paciente &&
-                state.paciente.id === action.payload
-
-            ) {
-
-                state.paciente = null;
-
-            }
-
-        },
-
-        clearPaciente(state) {
-
-            state.paciente = null;
-
-        }
-
-    }
-
+    },
 });
 
 export const {
-
-    getPacientesStart,
-
-    getPacientesSuccess,
-
-    getPacientesFailure,
-
-    getPacienteSuccess,
-
-    addPaciente,
-
-    updatePaciente,
-
-    deletePaciente,
-
-    clearPaciente
-
+    setPacienteSeleccionado,
+    limpiarPacienteSeleccionado,
+    limpiarError,
+    limpiarPacientes,
 } = pacienteSlice.actions;
 
 export default pacienteSlice.reducer;

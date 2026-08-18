@@ -85,30 +85,8 @@ function RecetaTable({
                 <TableHead>
                     <TableRow>
                         <TableCell>
-                            <strong>ID</strong>
-                        </TableCell>
-
-                        <TableCell>
                             <strong>
-                                Medicamento
-                            </strong>
-                        </TableCell>
-
-                        <TableCell>
-                            <strong>
-                                Dosis
-                            </strong>
-                        </TableCell>
-
-                        <TableCell>
-                            <strong>
-                                Frecuencia
-                            </strong>
-                        </TableCell>
-
-                        <TableCell>
-                            <strong>
-                                Indicaciones
+                                ID
                             </strong>
                         </TableCell>
 
@@ -129,37 +107,6 @@ function RecetaTable({
                             >
                                 <TableCell>
                                     {receta.id}
-                                </TableCell>
-
-                                <TableCell>
-                                    {receta.medicamento}
-                                </TableCell>
-
-                                <TableCell>
-                                    {receta.dosis}
-                                </TableCell>
-
-                                <TableCell>
-                                    {receta.frecuencia}
-                                </TableCell>
-
-                                <TableCell>
-                                    <div
-                                        style={{
-                                            maxWidth:
-                                                "300px",
-                                            overflow:
-                                                "hidden",
-                                            textOverflow:
-                                                "ellipsis",
-                                            whiteSpace:
-                                                "nowrap",
-                                        }}
-                                    >
-                                        {
-                                            receta.indicaciones
-                                        }
-                                    </div>
                                 </TableCell>
 
                                 <TableCell align="center">

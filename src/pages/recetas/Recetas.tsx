@@ -39,40 +39,23 @@ function Recetas() {
         dispatch(fetchRecetas());
     }, [dispatch]);
 
-    const recetasFiltradas =
-        recetas.filter((receta) => {
-            const texto =
-                busqueda
-                    .toLowerCase()
-                    .trim();
+ const recetasFiltradas =
+    recetas.filter((receta) => {
+        const texto =
+            busqueda
+                .toLowerCase()
+                .trim();
 
-            if (!texto) {
-                return true;
-            }
+        if (!texto) {
+            return true;
+        }
 
-            return (
-                String(
-                    receta.medicamento
-                )
-                    .toLowerCase()
-                    .includes(texto) ||
-                String(
-                    receta.indicaciones
-                )
-                    .toLowerCase()
-                    .includes(texto) ||
-                String(
-                    receta.dosis
-                )
-                    .toLowerCase()
-                    .includes(texto) ||
-                String(
-                    receta.frecuencia
-                )
-                    .toLowerCase()
-                    .includes(texto)
-            );
-        });
+        return String(
+            receta.id
+        )
+            .toLowerCase()
+            .includes(texto);
+    });
 
     const handleDelete = async (
         id: number

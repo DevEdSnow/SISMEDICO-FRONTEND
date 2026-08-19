@@ -282,12 +282,9 @@ function UsuarioDetalle() {
                                 Teléfono
                             </Typography>
 
-                            <Typography
-                                variant="body1"
-                                fontWeight="500"
-                            >
-                                {usuario.telefono}
-                            </Typography>
+                            <p style={{ margin: 0, fontWeight: 500 }}>
+    {usuario.telefono}
+</p>
                         </Grid>
                     </Grid>
                 </CardContent>

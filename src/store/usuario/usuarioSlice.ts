@@ -1,314 +1,458 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import {
+    createAsyncThunk,
+    createSlice,
+} from "@reduxjs/toolkit";
 
-export interface Usuario {
+import type {
+    PayloadAction,
+} from "@reduxjs/toolkit";
 
-    id: number;
+import {
+    listarUsuarios,
+    obtenerUsuario,
+    crearUsuario,
+    actualizarUsuario,
+    eliminarUsuario,
+} from "../../api/usuario";
 
-    uuid: string;
-
-    nombre: string;
-
-    apellido: string;
-
-    correo: string;
-
-    telefono: string;
-
-    direccion: string;
-
-    foto: string;
-
-    genero: string;
-
-    fechaNacimiento: string;
-
-    rol: string;
-
-    activo: boolean;
-
-    emailVerificado: boolean;
-
-    tokenFirebase: string;
-
-    ultimoAcceso: string;
-
-    fechaRegistro: string;
-
-    ultimaActualizacion: string;
-
-}
+import type {
+    UsuarioRequest,
+    UsuarioResponse,
+} from "../../api/usuario";
 
 interface UsuarioState {
+    usuarios: UsuarioResponse[];
 
-    usuarios: Usuario[];
-
-    usuario: Usuario | null;
+    usuarioSeleccionado:
+        | UsuarioResponse
+        | null;
 
     loading: boolean;
 
     error: string | null;
-
 }
 
 const initialState: UsuarioState = {
-
     usuarios: [],
 
-    usuario: null,
+    usuarioSeleccionado: null,
 
     loading: false,
 
-    error: null
-
+    error: null,
 };
 
-const usuarioSlice = createSlice({
+/**
+ * Obtener todos los usuarios
+ */
+export const fetchUsuarios =
+    createAsyncThunk<
+        UsuarioResponse[],
+        void,
+        {
+            rejectValue: string;
+        }
+    >(
+        "usuario/fetchUsuarios",
+        async (
+            _,
+            { rejectWithValue }
+        ) => {
+            try {
+                return await listarUsuarios();
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudieron obtener los usuarios."
+                );
+            }
+        }
+    );
 
+/**
+ * Obtener usuario por ID
+ */
+export const fetchUsuario =
+    createAsyncThunk<
+        UsuarioResponse,
+        number,
+        {
+            rejectValue: string;
+        }
+    >(
+        "usuario/fetchUsuario",
+        async (
+            id,
+            { rejectWithValue }
+        ) => {
+            try {
+                return await obtenerUsuario(
+                    id
+                );
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo obtener el usuario."
+                );
+            }
+        }
+    );
+
+/**
+ * Crear usuario
+ */
+export const addUsuario =
+    createAsyncThunk<
+        UsuarioResponse,
+        UsuarioRequest,
+        {
+            rejectValue: string;
+        }
+    >(
+        "usuario/addUsuario",
+        async (
+            request,
+            { rejectWithValue }
+        ) => {
+            try {
+                return await crearUsuario(
+                    request
+                );
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo crear el usuario."
+                );
+            }
+        }
+    );
+
+/**
+ * Actualizar usuario
+ */
+export const updateUsuario =
+    createAsyncThunk<
+        UsuarioResponse,
+        {
+            id: number;
+            request: UsuarioRequest;
+        },
+        {
+            rejectValue: string;
+        }
+    >(
+        "usuario/updateUsuario",
+        async (
+            { id, request },
+            { rejectWithValue }
+        ) => {
+            try {
+                return await actualizarUsuario(
+                    id,
+                    request
+                );
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo actualizar el usuario."
+                );
+            }
+        }
+    );
+
+/**
+ * Eliminar usuario
+ */
+export const removeUsuario =
+    createAsyncThunk<
+        number,
+        number,
+        {
+            rejectValue: string;
+        }
+    >(
+        "usuario/removeUsuario",
+        async (
+            id,
+            { rejectWithValue }
+        ) => {
+            try {
+                await eliminarUsuario(id);
+
+                return id;
+            } catch (error: any) {
+                return rejectWithValue(
+                    error?.response?.data
+                        ?.message ??
+                        "No se pudo eliminar el usuario."
+                );
+            }
+        }
+    );
+
+const usuarioSlice = createSlice({
     name: "usuario",
 
     initialState,
 
     reducers: {
+        setUsuarioSeleccionado: (
+            state,
+            action: PayloadAction<
+                UsuarioResponse | null
+            >
+        ) => {
+            state.usuarioSeleccionado =
+                action.payload;
+        },
 
-        getUsuariosStart(state) {
+        limpiarUsuarioSeleccionado: (
+            state
+        ) => {
+            state.usuarioSeleccionado =
+                null;
+        },
 
-            state.loading = true;
+        limpiarError: (
+            state
+        ) => {
             state.error = null;
-
         },
 
-        getUsuariosSuccess(
+        limpiarUsuarios: (
+            state
+        ) => {
+            state.usuarios = [];
 
-            state,
-            action: PayloadAction<Usuario[]>
-
-        ) {
-
-            state.loading = false;
-            state.usuarios = action.payload;
-
+            state.usuarioSeleccionado =
+                null;
         },
+    },
 
-        getUsuariosFailure(
+    extraReducers: (builder) => {
+        builder
 
-            state,
-            action: PayloadAction<string>
+            // LISTAR
+            .addCase(
+                fetchUsuarios.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-        ) {
+            .addCase(
+                fetchUsuarios.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state.loading = false;
-            state.error = action.payload;
+                    state.usuarios =
+                        action.payload;
+                }
+            )
 
-        },
+            .addCase(
+                fetchUsuarios.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-        getUsuarioSuccess(
+                    state.error =
+                        action.payload ??
+                        "Error al cargar los usuarios.";
+                }
+            )
 
-            state,
-            action: PayloadAction<Usuario>
+            // OBTENER
+            .addCase(
+                fetchUsuario.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-        ) {
+            .addCase(
+                fetchUsuario.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state.loading = false;
-            state.usuario = action.payload;
+                    state.usuarioSeleccionado =
+                        action.payload;
+                }
+            )
 
-        },
+            .addCase(
+                fetchUsuario.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-        addUsuario(
+                    state.error =
+                        action.payload ??
+                        "Error al obtener el usuario.";
+                }
+            )
 
-            state,
-            action: PayloadAction<Usuario>
+            // CREAR
+            .addCase(
+                addUsuario.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-        ) {
+            .addCase(
+                addUsuario.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state.usuarios.push(action.payload);
+                    state.usuarios.push(
+                        action.payload
+                    );
 
-        },
+                    state.usuarioSeleccionado =
+                        action.payload;
+                }
+            )
 
-        updateUsuario(
+            .addCase(
+                addUsuario.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-            state,
-            action: PayloadAction<Usuario>
+                    state.error =
+                        action.payload ??
+                        "Error al crear el usuario.";
+                }
+            )
 
-        ) {
+            // ACTUALIZAR
+            .addCase(
+                updateUsuario.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
 
-            const index = state.usuarios.findIndex(
+            .addCase(
+                updateUsuario.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
 
-                usuario => usuario.id === action.payload.id
+                    const index =
+                        state.usuarios.findIndex(
+                            (usuario) =>
+                                usuario.id ===
+                                action.payload.id
+                        );
 
+                    if (index !== -1) {
+                        state.usuarios[index] =
+                            action.payload;
+                    }
+
+                    state.usuarioSeleccionado =
+                        action.payload;
+                }
+            )
+
+            .addCase(
+                updateUsuario.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    state.error =
+                        action.payload ??
+                        "Error al actualizar el usuario.";
+                }
+            )
+
+            // ELIMINAR
+            .addCase(
+                removeUsuario.pending,
+                (state) => {
+                    state.loading = true;
+                    state.error = null;
+                }
+            )
+
+            .addCase(
+                removeUsuario.fulfilled,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    state.usuarios =
+                        state.usuarios.filter(
+                            (usuario) =>
+                                usuario.id !==
+                                action.payload
+                        );
+
+                    if (
+                        state
+                            .usuarioSeleccionado
+                            ?.id ===
+                        action.payload
+                    ) {
+                        state.usuarioSeleccionado =
+                            null;
+                    }
+                }
+            )
+
+            .addCase(
+                removeUsuario.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false;
+
+                    state.error =
+                        action.payload ??
+                        "Error al eliminar el usuario.";
+                }
             );
-
-            if (index !== -1) {
-
-                state.usuarios[index] = action.payload;
-
-            }
-
-            if (
-
-                state.usuario &&
-                state.usuario.id === action.payload.id
-
-            ) {
-
-                state.usuario = action.payload;
-
-            }
-
-        },
-
-        deleteUsuario(
-
-            state,
-            action: PayloadAction<number>
-
-        ) {
-
-            state.usuarios = state.usuarios.filter(
-
-                usuario => usuario.id !== action.payload
-
-            );
-
-            if (
-
-                state.usuario &&
-                state.usuario.id === action.payload
-
-            ) {
-
-                state.usuario = null;
-
-            }
-
-        },
-
-        activarUsuario(
-
-            state,
-            action: PayloadAction<number>
-
-        ) {
-
-            const usuario = state.usuarios.find(
-
-                u => u.id === action.payload
-
-            );
-
-            if (usuario) {
-
-                usuario.activo = true;
-
-            }
-
-        },
-
-        desactivarUsuario(
-
-            state,
-            action: PayloadAction<number>
-
-        ) {
-
-            const usuario = state.usuarios.find(
-
-                u => u.id === action.payload
-
-            );
-
-            if (usuario) {
-
-                usuario.activo = false;
-
-            }
-
-        },
-
-        verificarEmail(
-
-            state,
-            action: PayloadAction<number>
-
-        ) {
-
-            const usuario = state.usuarios.find(
-
-                u => u.id === action.payload
-
-            );
-
-            if (usuario) {
-
-                usuario.emailVerificado = true;
-
-            }
-
-        },
-
-        actualizarTokenFirebase(
-
-            state,
-            action: PayloadAction<{
-
-                id: number;
-
-                token: string;
-
-            }>
-
-        ) {
-
-            const usuario = state.usuarios.find(
-
-                u => u.id === action.payload.id
-
-            );
-
-            if (usuario) {
-
-                usuario.tokenFirebase = action.payload.token;
-
-            }
-
-        },
-
-        clearUsuario(state) {
-
-            state.usuario = null;
-
-        }
-
-    }
-
+    },
 });
 
 export const {
-
-    getUsuariosStart,
-
-    getUsuariosSuccess,
-
-    getUsuariosFailure,
-
-    getUsuarioSuccess,
-
-    addUsuario,
-
-    updateUsuario,
-
-    deleteUsuario,
-
-    activarUsuario,
-
-    desactivarUsuario,
-
-    verificarEmail,
-
-    actualizarTokenFirebase,
-
-    clearUsuario
-
+    setUsuarioSeleccionado,
+    limpiarUsuarioSeleccionado,
+    limpiarError,
+    limpiarUsuarios,
 } = usuarioSlice.actions;
 
 export default usuarioSlice.reducer;

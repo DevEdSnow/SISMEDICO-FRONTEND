@@ -171,13 +171,16 @@ function UsuarioDetalle() {
 
             <Card>
                 <CardContent>
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        gutterBottom
-                    >
-                        Información personal
-                    </Typography>
+                   <h2
+    style={{
+        margin: 0,
+        marginBottom: "16px",
+        fontSize: "20px",
+        fontWeight: "bold",
+    }}
+>
+    Información personal
+</h2>
 
                     <Divider
                         sx={{

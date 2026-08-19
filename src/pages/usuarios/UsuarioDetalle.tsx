@@ -135,12 +135,15 @@ function UsuarioDetalle() {
                 }}
             >
                 <div>
-                    <Typography
-                        variant="h4"
-                        fontWeight="bold"
-                    >
-                        Detalle del usuario
-                    </Typography>
+                    <h1
+    style={{
+        margin: 0,
+        fontSize: "28px",
+        fontWeight: "bold",
+    }}
+>
+    Detalle del usuario
+</h1>
 
                     <Typography
                         variant="body2"

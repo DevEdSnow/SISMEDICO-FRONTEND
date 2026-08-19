@@ -264,12 +264,9 @@ function UsuarioDetalle() {
                                 Correo electrónico
                             </Typography>
 
-                            <Typography
-                                variant="body1"
-                                fontWeight="500"
-                            >
-                                {usuario.correo}
-                            </Typography>
+                            <p style={{ margin: 0, fontWeight: 500 }}>
+    {usuario.correo}
+</p>
                         </Grid>
 
                         <Grid

@@ -246,12 +246,9 @@ function UsuarioDetalle() {
                                 Apellido
                             </Typography>
 
-                            <Typography
-                                variant="body1"
-                                fontWeight="500"
-                            >
-                                {usuario.apellido}
-                            </Typography>
+                            <p style={{ margin: 0, fontWeight: 500 }}>
+    {usuario.apellido}
+</p>
                         </Grid>
 
                         <Grid

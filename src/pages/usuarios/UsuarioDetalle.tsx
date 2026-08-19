@@ -205,12 +205,14 @@ function UsuarioDetalle() {
                                 ID
                             </Typography>
 
-                            <Typography
-                                variant="body1"
-                                fontWeight="500"
-                            >
-                                {usuario.id}
-                            </Typography>
+                            <p
+    style={{
+        margin: 0,
+        fontWeight: 500,
+    }}
+>
+    {usuario.id}
+</p>
                         </Grid>
 
                         <Grid

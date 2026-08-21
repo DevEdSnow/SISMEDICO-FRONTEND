@@ -1,13 +1,9 @@
-export enum EstadoCita {
-    PENDIENTE = "PENDIENTE",
-    CONFIRMADA = "CONFIRMADA",
-    CANCELADA = "CANCELADA",
-    COMPLETADA = "COMPLETADA",
-}
+export type EstadoCita =
+    | "PENDIENTE"
+    | "CONFIRMADA"
+    | "CANCELADA"
+    | "COMPLETADA";
 
-/**
- * Datos necesarios para crear o actualizar una cita
- */
 export interface CitaRequest {
     pacienteId: number;
     medicoId: number;
@@ -17,9 +13,6 @@ export interface CitaRequest {
     observaciones?: string;
 }
 
-/**
- * Respuesta de una cita
- */
 export interface CitaResponse {
     id: number;
     uuid?: string;
@@ -48,16 +41,10 @@ export interface CitaResponse {
     fechaActualizacion?: string;
 }
 
-/**
- * Datos para cancelar una cita
- */
 export interface CancelarCitaRequest {
     motivo: string;
 }
 
-/**
- * Filtros para consultar citas
- */
 export interface CitaFiltros {
     pacienteId?: number;
     medicoId?: number;
